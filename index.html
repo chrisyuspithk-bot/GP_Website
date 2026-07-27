@@ -139,6 +139,22 @@
     .reveal.is-visible .chart-path { stroke-dashoffset: 0; }
     .reveal.is-visible .chart-area { opacity: 1; }
 
+    /* 寄語引文:遮罩逐行揭示(捲動觸發,與 Hero 同一緩動曲線) */
+    html.js .quote-line { transform: translateY(112%); transition: transform .95s cubic-bezier(.19,1,.22,1); }
+    .reveal.is-visible .quote-line { transform: none; }
+    .quote-line-wrap:nth-child(2) .quote-line { transition-delay: .1s; }
+    .quote-line-wrap:nth-child(3) .quote-line { transition-delay: .2s; }
+    .quote-line-wrap:nth-child(4) .quote-line { transition-delay: .3s; }
+
+    /* 引文結句:金色柔光底線(螢光筆式,低透明度) */
+    .quote-highlight { background: linear-gradient(transparent 60%, rgba(212,175,55,.32) 60%); }
+
+    /* 寄語圖卡:格線淡入 + 終點金點脈動光環 */
+    .chart-grid { opacity: 0; transition: opacity 1s ease .5s; }
+    .reveal.is-visible .chart-grid { opacity: 1; }
+    .chart-dot-pulse { transform-box: fill-box; transform-origin: center; animation: dotpulse 2.6s ease-out infinite; }
+    @keyframes dotpulse { 0% { transform: scale(.7); opacity: .6; } 70%, 100% { transform: scale(3); opacity: 0; } }
+
     /* 減少動態偏好:停用一切動畫與進場狀態,直接呈現最終畫面 */
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
@@ -149,6 +165,9 @@
       .eyebrow-line { transform: scaleX(1); transition: none; }
       .chart-path { stroke-dashoffset: 0; transition: none; }
       .chart-area { opacity: 1; transition: none; }
+      html.js .quote-line { transform: none; transition: none; }
+      .chart-grid { opacity: 1; transition: none; }
+      .chart-dot-pulse { animation: none; opacity: 0; }
     }
   </style>
 </head>
@@ -523,30 +542,69 @@
     </section>
 
     <!-- ============================================================
-         管理合夥人寄語:金色豎線 + 大型引文 + 自繪深藍走勢線 — 淺灰底
+         管理合夥人寄語:巨型引文(遮罩逐行揭示)+ 年報式走勢圖卡 — 淺灰底
          ============================================================ -->
-    <section id="quote" data-od-id="quote-section" class="py-24 lg:py-32 bg-cloud border-t border-line">
-      <div class="max-w-6xl mx-auto px-6 lg:px-8">
-        <div class="max-w-3xl reveal">
-          <!-- 金色豎線:企業版引文標記 -->
-          <span class="block w-1 h-14 bg-gold rounded-full" aria-hidden="true"></span>
-          <blockquote class="mt-8 font-semibold tracking-[-0.01em] leading-[1.5] text-navy text-[1.65rem] md:text-4xl">
-            資本的價值,不在於規模,<br class="hidden md:inline">而在於它成就的企業與未來。
-          </blockquote>
-          <p class="mt-8 text-[13px] tracking-[0.26em] text-steel uppercase">創辦人暨管理合夥人</p>
+    <section id="quote" data-od-id="quote-section" class="py-24 lg:py-32 bg-cloud border-t border-line overflow-hidden">
+      <div class="max-w-6xl mx-auto px-6 lg:px-8 grid lg:grid-cols-12 gap-14 lg:gap-16 items-center">
 
-          <!-- 自繪走勢線:捲入視窗時深藍路徑描邊展開 -->
-          <svg class="mt-14 w-full max-w-2xl h-24 text-navy/40" viewBox="0 0 600 96" fill="none" aria-hidden="true" preserveAspectRatio="none">
-            <defs>
-              <linearGradient id="chartFill" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stop-color="#0A192F" stop-opacity="0.10"/>
-                <stop offset="1" stop-color="#0A192F" stop-opacity="0"/>
-              </linearGradient>
-            </defs>
-            <path class="chart-area" d="M0 78 L60 72 L120 76 L180 60 L240 64 L300 48 L360 52 L420 34 L480 40 L540 22 L600 14 L600 96 L0 96 Z" fill="url(#chartFill)" stroke="none"/>
-            <path class="chart-path" pathLength="1" d="M0 78 L60 72 L120 76 L180 60 L240 64 L300 48 L360 52 L420 34 L480 40 L540 22 L600 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+        <!-- 左欄:眉題 + 巨型引文 + 署名 -->
+        <div class="lg:col-span-7 reveal">
+          <p class="flex items-center gap-4 text-[13px] font-medium tracking-[0.28em] text-steel uppercase">
+            <span class="eyebrow-line inline-block h-px w-10 bg-gold"></span>管理合夥人寄語
+          </p>
+
+          <!-- 引文:襯線引號浮水印 + 四行遮罩揭示,結句金色柔光底線 -->
+          <blockquote class="relative mt-10">
+            <span class="absolute -top-14 -left-3 text-[10rem] leading-none font-serif text-navy/[0.05] select-none" aria-hidden="true">&ldquo;</span>
+            <span class="relative font-semibold tracking-[-0.01em] leading-[1.4] text-navy text-[1.85rem] md:text-[2.6rem]">
+              <span class="quote-line-wrap block overflow-hidden"><span class="quote-line block">資本的價值,</span></span>
+              <span class="quote-line-wrap block overflow-hidden"><span class="quote-line block">不在於規模,</span></span>
+              <span class="quote-line-wrap block overflow-hidden"><span class="quote-line block">而在於它成就的</span></span>
+              <span class="quote-line-wrap block overflow-hidden"><span class="quote-line block"><span class="quote-highlight">企業與未來。</span></span></span>
+            </span>
+          </blockquote>
+
+          <!-- 署名:GP 字標章 + 職銜(與導航品牌標一致) -->
+          <div class="mt-11 flex items-center gap-4" data-od-id="quote-attribution">
+            <span class="w-12 h-12 rounded-[4px] bg-navy flex items-center justify-center text-gold text-sm font-semibold tracking-wider">GP</span>
+            <div>
+              <p class="text-[15px] font-medium text-navy">創辦人暨管理合夥人</p>
+              <p class="mt-0.5 text-[13px] tracking-[0.08em] text-steel">GP Capital Group · 香港</p>
+            </div>
+          </div>
         </div>
+
+        <!-- 右欄:年報式圖卡 — 格線淡入、路徑自繪、終點金點脈動 -->
+        <div class="lg:col-span-5 reveal" style="transition-delay:.15s" data-od-id="quote-figure">
+          <figure class="rounded-[4px] border border-line bg-white p-7 md:p-8 shadow-[0_18px_44px_rgba(10,25,47,0.06)]">
+            <figcaption class="flex items-center justify-between gap-4">
+              <p class="text-[12px] font-medium tracking-[0.24em] text-steel uppercase">成立至今 · 累計增長走勢</p>
+              <span class="shrink-0 rounded-full border border-line px-2.5 py-0.5 text-[11px] tracking-[0.1em] text-steel">示意</span>
+            </figcaption>
+            <svg class="mt-6 w-full h-auto text-navy" viewBox="0 0 600 240" fill="none" aria-hidden="true">
+              <defs>
+                <linearGradient id="chartFill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#0A192F" stop-opacity="0.10"/>
+                  <stop offset="1" stop-color="#0A192F" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <!-- 水平格線(淡入) -->
+              <g class="chart-grid" stroke="#E3E8F0" stroke-width="1">
+                <line x1="0" y1="40" x2="600" y2="40"/>
+                <line x1="0" y1="100" x2="600" y2="100"/>
+                <line x1="0" y1="160" x2="600" y2="160"/>
+                <line x1="0" y1="220" x2="600" y2="220"/>
+              </g>
+              <path class="chart-area" d="M0 190 L60 178 L120 186 L180 152 L240 162 L300 122 L360 132 L420 88 L480 100 L540 58 L600 36 L600 240 L0 240 Z" fill="url(#chartFill)" stroke="none"/>
+              <path class="chart-path" pathLength="1" d="M0 190 L60 178 L120 186 L180 152 L240 162 L300 122 L360 132 L420 88 L480 100 L540 58 L600 36" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <!-- 終點:金點 + 脈動光環 -->
+              <circle class="chart-dot-pulse" cx="600" cy="36" r="5" fill="none" stroke="#D4AF37" stroke-width="1.5"/>
+              <circle cx="600" cy="36" r="4" fill="#D4AF37"/>
+            </svg>
+            <p class="mt-5 border-t border-line pt-4 text-[12px] leading-relaxed text-steel">圖表僅作設計示意;過往表現並非未來回報之指標。</p>
+          </figure>
+        </div>
+
       </div>
     </section>
 
